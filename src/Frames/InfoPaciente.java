@@ -5,6 +5,12 @@
  */
 package Frames;
 
+import clases.Conexion;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +28,7 @@ public class InfoPaciente extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);    
     }
     
-    public InfoPaciente(int pacID) {
+    public InfoPaciente(int pacID) throws SQLException {
         initComponents();
         this.setLocationRelativeTo(null); 
         System.out.println(pacID);
@@ -30,8 +36,24 @@ public class InfoPaciente extends javax.swing.JFrame {
         
     }
     
-    private void getData(int pacID){
+    private void getData(int pacID) throws SQLException{
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        String sqlQuery = "Select * From pacientes";
+        
+        ps = con.prepareStatement(sqlQuery);
+        rs = ps.executeQuery();
+        
+        ResultSetMetaData rsMd = rs.getMetaData();
+        int xd = rsMd.getColumnCount();
+        if(xd == 0){
+            System.out.println("Este compa no tiene detalles aun unu");
+            NameField.setText("Nombre xd");
+        }
     }
     
     
@@ -126,22 +148,27 @@ public class InfoPaciente extends javax.swing.JFrame {
         genderField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         genderField.setForeground(new java.awt.Color(255, 255, 255));
 
+        IMCField.setEditable(false);
         IMCField.setBackground(new java.awt.Color(153, 153, 153));
         IMCField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         IMCField.setForeground(new java.awt.Color(255, 255, 255));
 
+        IMMField.setEditable(false);
         IMMField.setBackground(new java.awt.Color(153, 153, 153));
         IMMField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         IMMField.setForeground(new java.awt.Color(255, 255, 255));
 
+        cinturaField.setEditable(false);
         cinturaField.setBackground(new java.awt.Color(153, 153, 153));
         cinturaField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         cinturaField.setForeground(new java.awt.Color(255, 255, 255));
 
+        brazoField.setEditable(false);
         brazoField.setBackground(new java.awt.Color(153, 153, 153));
         brazoField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         brazoField.setForeground(new java.awt.Color(255, 255, 255));
 
+        estaturaField.setEditable(false);
         estaturaField.setBackground(new java.awt.Color(153, 153, 153));
         estaturaField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         estaturaField.setForeground(new java.awt.Color(255, 255, 255));
@@ -207,6 +234,7 @@ public class InfoPaciente extends javax.swing.JFrame {
             }
         });
 
+        IMMField1.setEditable(false);
         IMMField1.setBackground(new java.awt.Color(153, 153, 153));
         IMMField1.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         IMMField1.setForeground(new java.awt.Color(255, 255, 255));
