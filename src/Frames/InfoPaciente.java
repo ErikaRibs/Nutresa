@@ -5,6 +5,9 @@
  */
 package Frames;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author PRIDE OMEGA
@@ -16,7 +19,18 @@ public class InfoPaciente extends javax.swing.JFrame {
      */
     public InfoPaciente() {
         initComponents();
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null);    
+    }
+    
+    public InfoPaciente(int pacID) {
+        initComponents();
+        this.setLocationRelativeTo(null); 
+        System.out.println(pacID);
+        getData(pacID);
+        
+    }
+    
+    private void getData(int pacID){
         
     }
     
@@ -321,12 +335,13 @@ public class InfoPaciente extends javax.swing.JFrame {
                             .addComponent(jLabel7)
                             .addComponent(jLabel11))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(estaturaField, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(IMMField1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel15)))
+                                .addComponent(jLabel15))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(estaturaField, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel10)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8)
@@ -345,7 +360,12 @@ public class InfoPaciente extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        Main mn = new Main();
+        Main mn = null;
+        try {
+            mn = new Main();
+        } catch (Exception ex) {
+            Logger.getLogger(InfoPaciente.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
         mn.setVisible(true);
     }//GEN-LAST:event_jLabel2MouseClicked

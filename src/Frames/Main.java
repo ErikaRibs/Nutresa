@@ -20,8 +20,10 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -43,9 +45,9 @@ public class Main extends javax.swing.JFrame {
         fillTab();
         
     }
-    
+    public DefaultTableModel dm = new DefaultTableModel();
     private void fillTab() throws Exception {
-        DefaultTableModel dm = new DefaultTableModel();
+        
         tbPacientes.setModel(dm);
         
         PreparedStatement ps = null;
@@ -81,7 +83,12 @@ public class Main extends javax.swing.JFrame {
         }
     }
    
-    
+    private void filterTable(String query){
+        TableRowSorter<DefaultTableModel> trs = new TableRowSorter<>(dm);
+        tbPacientes.setRowSorter(trs);
+        
+        trs.setRowFilter(RowFilter.regexFilter(query));
+    }
     
 
     /**
@@ -132,6 +139,11 @@ public class Main extends javax.swing.JFrame {
         txtSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtSearchActionPerformed(evt);
+            }
+        });
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
             }
         });
 
@@ -309,7 +321,8 @@ public class Main extends javax.swing.JFrame {
         }else{
             int s = JOptionPane.showConfirmDialog(null, "Desplegar información de "+model.getValueAt(i, 1).toString(),"Confirmación",JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
             if(s == JOptionPane.YES_OPTION){
-                InfoPaciente ip = new InfoPaciente();
+                int id = Integer.parseInt(model.getValueAt(i,0).toString());
+                InfoPaciente ip = new InfoPaciente(id);
                 this.dispose();
                 ip.setVisible(true);
             }
@@ -329,8 +342,13 @@ public class Main extends javax.swing.JFrame {
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
-        System.out.println(evt.getActionCommand().toString());
+    
     }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+        String query = txtSearch.getText().toString();
+        filterTable(query);
+    }//GEN-LAST:event_txtSearchKeyReleased
 
     /**
      * @param args the command line arguments
