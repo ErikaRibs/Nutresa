@@ -5,14 +5,22 @@
  */
 package Frames;
 
+import clases.Conexion;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 /**
@@ -28,11 +36,49 @@ public class Main extends javax.swing.JFrame {
     Thread hilo;
     String hr,min,sec;
     
-    public Main() {
+    public Main() throws Exception {
         initComponents();
         //this.setContentPane(fondos);
         this.setLocationRelativeTo(null);
+        fillTab();
         
+    }
+    
+    private void fillTab() throws Exception {
+        DefaultTableModel dm = new DefaultTableModel();
+        tbPacientes.setModel(dm);
+        
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        String sqlQuery = "Select * From pacientes";
+        
+        ps = con.prepareStatement(sqlQuery);
+        rs = ps.executeQuery();
+        
+        ResultSetMetaData rsMd = rs.getMetaData();
+        int xd = rsMd.getColumnCount();
+        
+        dm.addColumn("ID");
+        dm.addColumn("Nombre completo");
+        dm.addColumn("Genero");
+        dm.addColumn("Edad");
+        dm.addColumn("Contacto");
+        //dm.addColumn("");
+        
+        
+        while(rs.next()){
+            Object[] filas = new Object[xd];
+            
+            for(int i=0;i<xd;i++){
+                filas[i] = rs.getObject(i+1);
+            }
+            
+            dm.addRow(filas);
+        }
     }
    
     
@@ -56,7 +102,7 @@ public class Main extends javax.swing.JFrame {
         Desplegar = new javax.swing.JLabel();
         Nuevo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbPacientes = new javax.swing.JTable();
         txtSaludo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -83,6 +129,11 @@ public class Main extends javax.swing.JFrame {
         txtSearch.setBackground(new java.awt.Color(153, 153, 153));
         txtSearch.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         txtSearch.setForeground(new java.awt.Color(255, 255, 255));
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchActionPerformed(evt);
+            }
+        });
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/20 pciento sin fondo.png"))); // NOI18N
 
@@ -130,8 +181,8 @@ public class Main extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTable1.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbPacientes.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        tbPacientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {"Ricard", "Reyes G"},
                 {"Erika", "Rivas L"}
@@ -155,16 +206,16 @@ public class Main extends javax.swing.JFrame {
                 return false;
             }
         });
-        jTable1.setToolTipText("");
-        jTable1.setSelectionBackground(new java.awt.Color(197, 152, 38));
-        jTable1.setSelectionForeground(new java.awt.Color(0, 0, 0));
-        jTable1.setShowVerticalLines(false);
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        tbPacientes.setToolTipText("");
+        tbPacientes.setSelectionBackground(new java.awt.Color(197, 152, 38));
+        tbPacientes.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        tbPacientes.setShowVerticalLines(false);
+        tbPacientes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTable1MouseClicked(evt);
+                tbPacientesMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tbPacientes);
 
         txtSaludo.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
         txtSaludo.setText("Buen día, LN Omar Moreno");
@@ -242,21 +293,21 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+    private void tbPacientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPacientesMouseClicked
         // TODO add your handling code here:
         //int i = jTable1.getSelectedRow();
        // TableModel model = jTable1.getModel();
-    }//GEN-LAST:event_jTable1MouseClicked
+    }//GEN-LAST:event_tbPacientesMouseClicked
 
     private void DesplegarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DesplegarMouseClicked
         // TODO add your handling code here:
         int i = -1;
-        i = jTable1.getSelectedRow();
-        TableModel model = jTable1.getModel();
+        i = tbPacientes.getSelectedRow();
+        TableModel model = tbPacientes.getModel();
         if(i == -1){
             JOptionPane.showMessageDialog(null, "No haz seleccionado paciente","Upss....",JOptionPane.INFORMATION_MESSAGE);
         }else{
-            int s = JOptionPane.showConfirmDialog(null, "Desplegar información de "+model.getValueAt(i, 0).toString()+" "+model.getValueAt(i, 1).toString(),"Confirmación",JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
+            int s = JOptionPane.showConfirmDialog(null, "Desplegar información de "+model.getValueAt(i, 1).toString(),"Confirmación",JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
             if(s == JOptionPane.YES_OPTION){
                 InfoPaciente ip = new InfoPaciente();
                 this.dispose();
@@ -275,6 +326,11 @@ public class Main extends javax.swing.JFrame {
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
         System.exit(0);
     }//GEN-LAST:event_jLabel3MouseClicked
+
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        // TODO add your handling code here:
+        System.out.println(evt.getActionCommand().toString());
+    }//GEN-LAST:event_txtSearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -306,7 +362,11 @@ public class Main extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().setVisible(true);
+                try {
+                    new Main().setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -321,8 +381,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JPanel panelInferior;
+    private javax.swing.JTable tbPacientes;
     private javax.swing.JLabel txtSaludo;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
