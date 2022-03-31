@@ -5,6 +5,14 @@
  */
 package Frames;
 
+import java.awt.Image;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 /**
  *
  * @author PRIDE OMEGA
@@ -14,9 +22,32 @@ public class PlanAlimenticio extends javax.swing.JFrame {
     /**
      * Creates new form PlanAlimenticio
      */
+    private int pID;
     public PlanAlimenticio() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setTitle("Plan Alimenticio");
+    }
+    public PlanAlimenticio(int pcId) {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setTitle("Plan Alimenticio");
+        pID = pcId;
+        cambiarIcono(plan,pcId);
+        worker.setVisible(false);
+        flag.setVisible(false);
+    }
+    
+    private ImageIcon imagen;
+    private Icon icono;
+    
+    private void cambiarIcono(JLabel lbl, int id) {
+        String url = "src/PlanAlimenticioIMG/"+id+".jpg";
+        
+        this.imagen = new ImageIcon(url);
+        this.icono = new ImageIcon(this.imagen.getImage().getScaledInstance(lbl.getWidth(), lbl.getHeight(), Image.SCALE_DEFAULT));
+        lbl.setIcon(this.icono);
+        this.repaint();
     }
 
     /**
@@ -30,19 +61,21 @@ public class PlanAlimenticio extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        tipoPaciente = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         NameField = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        worker = new javax.swing.JLabel();
+        flag = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        tipoPaciente = new javax.swing.JLabel();
+        plan = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(229, 229, 229));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/error.png"))); // NOI18N
@@ -53,17 +86,18 @@ public class PlanAlimenticio extends javax.swing.JFrame {
                 jLabel1MouseClicked(evt);
             }
         });
-
-        tipoPaciente.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        tipoPaciente.setText("Type");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 60, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel3.setText("Nombre");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, -1, -1));
 
         NameField.setEditable(false);
         NameField.setBackground(new java.awt.Color(153, 153, 153));
         NameField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         NameField.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel1.add(NameField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 40, 398, 38));
+        jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(54, 122, 626, 10));
 
         jLabel2.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -75,94 +109,32 @@ public class PlanAlimenticio extends javax.swing.JFrame {
                 jLabel2MouseClicked(evt);
             }
         });
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 390, -1, -1));
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/ingeniero.png"))); // NOI18N
+        worker.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/ingeniero.png"))); // NOI18N
+        jPanel1.add(worker, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 193, -1, -1));
 
-        jLabel5.setFont(new java.awt.Font("Verdana", 2, 14)); // NOI18N
-        jLabel5.setText("Seguimos trabajando. No olvides tu casco");
+        flag.setFont(new java.awt.Font("Verdana", 2, 14)); // NOI18N
+        flag.setText("Seguimos trabajando. No olvides tu casco");
+        jPanel1.add(flag, new org.netbeans.lib.awtextra.AbsoluteConstraints(199, 275, 325, 40));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(NameField, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(69, 69, 69)
-                        .addComponent(tipoPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 626, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(41, 41, 41))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(330, 330, 330)
-                        .addComponent(jLabel4)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(199, 199, 199)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
-                        .addComponent(NameField, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(tipoPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel1))
-                .addGap(53, 53, 53)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(61, 61, 61)
-                .addComponent(jLabel4)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addContainerGap())
-        );
+        jLabel6.setBackground(new java.awt.Color(197, 152, 38));
+        jLabel6.setOpaque(true);
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 730, 30));
 
-        jPanel2.setBackground(new java.awt.Color(197, 152, 38));
-        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 731, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 15, Short.MAX_VALUE)
-        );
+        tipoPaciente.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jPanel1.add(tipoPaciente, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 40, 64, 70));
+        jPanel1.add(plan, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 140, 640, 250));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 436, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -173,7 +145,12 @@ public class PlanAlimenticio extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        InfoPaciente mn = new InfoPaciente();
+        InfoPaciente mn = null;
+        try {
+            mn = new InfoPaciente(pID);
+        } catch (SQLException ex) {
+            Logger.getLogger(PlanAlimenticio.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
         mn.setVisible(true);
         //      "/desktop/planesAlimenticios/NombrePaciente/plan.jpg"
@@ -216,14 +193,15 @@ public class PlanAlimenticio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField NameField;
+    private javax.swing.JLabel flag;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel plan;
     private javax.swing.JLabel tipoPaciente;
+    private javax.swing.JLabel worker;
     // End of variables declaration//GEN-END:variables
 }
