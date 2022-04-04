@@ -80,9 +80,9 @@ public class NuevasMedidasPaciente extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Agregaste correctamente las nuevas medidas para "+nombreGlobal+"\nAhora se actualizaran sus fechas y citas hasta el momento","Agregado Correctamente",JOptionPane.INFORMATION_MESSAGE);
             
             
-            int count = getCitasCount("a") +1; //Esto nos regresa el valor de la ultima cita por ejemplo un 1 o si no hay citas previas un 0
-            int medidaID = getCitasCount("b")+1; //Este regresa el ID con el mismo metodo anterior
-            System.out.println("------Atrape valores como: contador de citas= "+count+" Y, medida id = "+medidaID);
+            int count = getCitasCount(); //Esto nos regresa el valor de la ultima cita por ejemplo un 1 o si no hay citas previas un 0
+            int medidaID = getID_Medida(pcID); //Este regresa el ID con el mismo metodo anterior
+            System.out.println("Actualizando fechas: contador de citas= "+count+" Y, medida id = "+medidaID);
             //Lanzamos los valores a updateFecha
             updateFechas(count,medidaID,fecha);
         }
@@ -172,26 +172,51 @@ public class NuevasMedidasPaciente extends javax.swing.JFrame {
         IMCField.setBackground(new java.awt.Color(153, 153, 153));
         IMCField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         IMCField.setForeground(new java.awt.Color(255, 255, 255));
+        IMCField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                IMCFieldKeyTyped(evt);
+            }
+        });
         jPanel1.add(IMCField, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 163, 52, 38));
 
         IMMField.setBackground(new java.awt.Color(153, 153, 153));
         IMMField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         IMMField.setForeground(new java.awt.Color(255, 255, 255));
+        IMMField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                IMMFieldKeyTyped(evt);
+            }
+        });
         jPanel1.add(IMMField, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 219, 52, 38));
 
         cinturaField.setBackground(new java.awt.Color(153, 153, 153));
         cinturaField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         cinturaField.setForeground(new java.awt.Color(255, 255, 255));
+        cinturaField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                cinturaFieldKeyTyped(evt);
+            }
+        });
         jPanel1.add(cinturaField, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 163, 52, 38));
 
         brazoField.setBackground(new java.awt.Color(153, 153, 153));
         brazoField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         brazoField.setForeground(new java.awt.Color(255, 255, 255));
+        brazoField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                brazoFieldKeyTyped(evt);
+            }
+        });
         jPanel1.add(brazoField, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 219, 52, 38));
 
         estaturaField.setBackground(new java.awt.Color(153, 153, 153));
         estaturaField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         estaturaField.setForeground(new java.awt.Color(255, 255, 255));
+        estaturaField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                estaturaFieldKeyTyped(evt);
+            }
+        });
         jPanel1.add(estaturaField, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 275, 52, 38));
 
         jLabel4.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
@@ -279,6 +304,11 @@ public class NuevasMedidasPaciente extends javax.swing.JFrame {
         pesoField.setBackground(new java.awt.Color(153, 153, 153));
         pesoField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         pesoField.setForeground(new java.awt.Color(255, 255, 255));
+        pesoField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                pesoFieldKeyTyped(evt);
+            }
+        });
         jPanel1.add(pesoField, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 275, 52, 38));
 
         jLabel17.setBackground(new java.awt.Color(197, 152, 38));
@@ -384,6 +414,54 @@ public class NuevasMedidasPaciente extends javax.swing.JFrame {
         ejemplo.setVisible(false);
     }//GEN-LAST:event_dateFieldFocusLost
 
+    private void IMCFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_IMCFieldKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if(!Character.isDigit(c)){
+            evt.consume();
+        }
+    }//GEN-LAST:event_IMCFieldKeyTyped
+
+    private void IMMFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_IMMFieldKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if(!Character.isDigit(c)){
+            evt.consume();
+        }
+    }//GEN-LAST:event_IMMFieldKeyTyped
+
+    private void pesoFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pesoFieldKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if(!Character.isDigit(c)){
+            evt.consume();
+        }
+    }//GEN-LAST:event_pesoFieldKeyTyped
+
+    private void cinturaFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cinturaFieldKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if(!Character.isDigit(c)){
+            evt.consume();
+        }
+    }//GEN-LAST:event_cinturaFieldKeyTyped
+
+    private void brazoFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_brazoFieldKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if(!Character.isDigit(c)){
+            evt.consume();
+        }
+    }//GEN-LAST:event_brazoFieldKeyTyped
+
+    private void estaturaFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_estaturaFieldKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if(!Character.isDigit(c)){
+            evt.consume();
+        }
+    }//GEN-LAST:event_estaturaFieldKeyTyped
+
     /**
      * @param args the command line arguments
      */
@@ -471,7 +549,7 @@ public class NuevasMedidasPaciente extends javax.swing.JFrame {
        }
     }
 
-    private int getCitasCount(String ab) throws SQLException {
+    private int getCitasCount() throws SQLException {
         
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -479,23 +557,21 @@ public class NuevasMedidasPaciente extends javax.swing.JFrame {
         Conexion conn = new Conexion();
         Connection con  = conn.getConnection();
         
-        String sqlQuery = "select citaNumero, ID_Medida from fechas where ID_Paciente ="+pcID+" order by citaNumero desc limit 1;";
+        String sqlQuery = "select * from medidas where ID_Paciente ="+pcID;
         
         ps = con.prepareStatement(sqlQuery);
         rs = ps.executeQuery();
         
         if(rs.next()){
-            if("a".equals(ab)){
-                System.err.println("tomamos citaNumero siendo en este caso: "+Integer.parseInt(rs.getObject(1).toString()));
-                return Integer.parseInt(rs.getObject(1).toString());
-            }else if ("b".equals(ab)){
-                System.err.println("Retornamos el ID_Medida que aqui es: "+Integer.parseInt(rs.getObject(2).toString()));
-                return Integer.parseInt(rs.getObject(2).toString());
-            } 
+            int count = 1;
+            while(rs.next()){
+                count++;
+            }
+            return count;
         }else{
             return 0;
         }
-        return 0;
+       
     }
 
     private void updateFechas(int count, int medidaID, String fecha) throws SQLException {
@@ -521,6 +597,23 @@ public class NuevasMedidasPaciente extends javax.swing.JFrame {
         }else{
             JOptionPane.showMessageDialog(null, "Algo salio mal");
         }
+    }
+
+    private int getID_Medida(int pcID) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        String query = "select ID_Medida from medidas where ID_Paciente = "+pcID+" order by ID_Medida desc limit 1";
+        ps = con.prepareStatement(query);
+        rs = ps.executeQuery();
+        if(rs.next()){
+            int tmp = Integer.parseInt(rs.getObject(1).toString());
+            con.close();
+            return tmp;
+        }
+        return 0;
     }
 
   

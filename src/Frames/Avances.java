@@ -5,6 +5,22 @@
  */
 package Frames;
 
+import clases.Conexion;
+import clases.Medidas;
+import java.awt.Color;
+import java.awt.Image;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 /**
  *
  * @author PRIDE OMEGA
@@ -17,6 +33,50 @@ public class Avances extends javax.swing.JFrame {
     public Avances() {
         initComponents();
         this.setLocationRelativeTo(null);
+    }
+    private int assignedDate = 2;
+    
+    private ImageIcon imagen;
+    private Icon icono;
+    
+    private int idP;
+    private ArrayList<Medidas> medidas = new ArrayList<>();
+    private ArrayList<Integer> allDates = new ArrayList<>();
+    public Avances(int id) throws SQLException {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        idP = id;
+        System.err.println("Si llego el ID");
+        setName(id);
+        getAllMedidas(id);
+    }
+    
+    private void cambiarIcono(JLabel lbl, String tipo) {
+        String url = "src/src/";
+        if(null != tipo)switch (tipo) {
+            case "Nada":
+                url+="Nada.png";
+                break;
+            case "Deportes":
+                url+="Deportes.png";
+                break;
+            case "Pesas":
+                url+="Pesas.png";
+                break;
+            case "Crossfit":
+                url+="Crossfit.png";
+                break;
+            case "NoData":
+                url+="NoData.png";
+                break;
+            default:
+                url+="Nada.png";
+                break;
+        }
+        this.imagen = new ImageIcon(url);
+        this.icono = new ImageIcon(this.imagen.getImage().getScaledInstance(lbl.getWidth(), lbl.getHeight(), Image.SCALE_DEFAULT));
+        lbl.setIcon(this.icono);
+        this.repaint();
     }
 
     /**
@@ -34,12 +94,45 @@ public class Avances extends javax.swing.JFrame {
         NameField = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        firstDate = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jPanel3 = new javax.swing.JPanel();
+        combo = new javax.swing.JComboBox<>();
+        panelDatos = new javax.swing.JPanel();
+        cambioIMM = new javax.swing.JLabel();
+        cambioPeso = new javax.swing.JLabel();
+        cambioCintura = new javax.swing.JLabel();
+        cambioBrazo = new javax.swing.JLabel();
+        cambioEstatura = new javax.swing.JLabel();
+        cambioImc = new javax.swing.JLabel();
+        flag = new javax.swing.JLabel();
         tipoPaciente = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        oldCinturalbl = new javax.swing.JLabel();
+        oldEstaturalbl = new javax.swing.JLabel();
+        oldBrazolbl = new javax.swing.JLabel();
+        oldPesolbl = new javax.swing.JLabel();
+        oldIMMlbl = new javax.swing.JLabel();
+        oldIMClbl = new javax.swing.JLabel();
+        newIMClbl = new javax.swing.JLabel();
+        newIMMlbl = new javax.swing.JLabel();
+        newPesolbl = new javax.swing.JLabel();
+        newCinturalbl = new javax.swing.JLabel();
+        newBrazolbl = new javax.swing.JLabel();
+        newEstaturalbl = new javax.swing.JLabel();
+        oldEstatura = new javax.swing.JTextField();
+        oldIMC = new javax.swing.JTextField();
+        oldIMM = new javax.swing.JTextField();
+        oldPeso = new javax.swing.JTextField();
+        oldCintura = new javax.swing.JTextField();
+        oldBrazo = new javax.swing.JTextField();
+        newIMC = new javax.swing.JTextField();
+        newIMM = new javax.swing.JTextField();
+        newPeso = new javax.swing.JTextField();
+        newCintura = new javax.swing.JTextField();
+        newBrazo = new javax.swing.JTextField();
+        newEstatura = new javax.swing.JTextField();
+        oldIMClbl1 = new javax.swing.JLabel();
+        oldIMClbl2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -82,36 +175,84 @@ public class Avances extends javax.swing.JFrame {
         });
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 390, -1, -1));
 
-        jTextField1.setEditable(false);
-        jTextField1.setBackground(new java.awt.Color(153, 153, 153));
-        jTextField1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        jTextField1.setForeground(new java.awt.Color(255, 255, 255));
-        jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField1.setText("Fecha 1");
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 156, 107, 49));
+        firstDate.setEditable(false);
+        firstDate.setBackground(new java.awt.Color(153, 153, 153));
+        firstDate.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        firstDate.setForeground(new java.awt.Color(255, 255, 255));
+        firstDate.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        firstDate.setText("Fecha 1");
+        jPanel1.add(firstDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 160, 107, 49));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/button (1).png"))); // NOI18N
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(284, 156, -1, -1));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 160, -1, -1));
 
-        jComboBox1.setBackground(new java.awt.Color(153, 153, 153));
-        jComboBox1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Fecha 2", "Fecha 3" }));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(541, 156, 110, 49));
+        combo.setBackground(new java.awt.Color(153, 153, 153));
+        combo.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        combo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboActionPerformed(evt);
+            }
+        });
+        jPanel1.add(combo, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 160, 110, 49));
 
-        jPanel3.setBackground(new java.awt.Color(153, 153, 153));
+        panelDatos.setBackground(new java.awt.Color(153, 153, 153));
+        panelDatos.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 175, Short.MAX_VALUE)
-        );
+        cambioIMM.setBackground(new java.awt.Color(0, 153, 0));
+        cambioIMM.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        cambioIMM.setForeground(new java.awt.Color(255, 255, 255));
+        cambioIMM.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cambioIMM.setText("IMM");
+        cambioIMM.setOpaque(true);
+        panelDatos.add(cambioIMM, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 90, 30));
 
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(284, 223, 170, -1));
+        cambioPeso.setBackground(new java.awt.Color(0, 153, 0));
+        cambioPeso.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        cambioPeso.setForeground(new java.awt.Color(255, 255, 255));
+        cambioPeso.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cambioPeso.setText("PESO");
+        cambioPeso.setOpaque(true);
+        panelDatos.add(cambioPeso, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 90, 90, 30));
+
+        cambioCintura.setBackground(new java.awt.Color(0, 153, 0));
+        cambioCintura.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        cambioCintura.setForeground(new java.awt.Color(255, 255, 255));
+        cambioCintura.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cambioCintura.setText("CINTURA");
+        cambioCintura.setOpaque(true);
+        panelDatos.add(cambioCintura, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 130, 90, 30));
+
+        cambioBrazo.setBackground(new java.awt.Color(0, 153, 0));
+        cambioBrazo.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        cambioBrazo.setForeground(new java.awt.Color(255, 255, 255));
+        cambioBrazo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cambioBrazo.setText("BRAZO");
+        cambioBrazo.setOpaque(true);
+        panelDatos.add(cambioBrazo, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 170, 90, 30));
+
+        cambioEstatura.setBackground(new java.awt.Color(0, 153, 0));
+        cambioEstatura.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        cambioEstatura.setForeground(new java.awt.Color(255, 255, 255));
+        cambioEstatura.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cambioEstatura.setText("ESTATURA");
+        cambioEstatura.setOpaque(true);
+        panelDatos.add(cambioEstatura, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 210, 90, 30));
+
+        cambioImc.setBackground(new java.awt.Color(0, 153, 0));
+        cambioImc.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        cambioImc.setForeground(new java.awt.Color(255, 255, 255));
+        cambioImc.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cambioImc.setText("IMC");
+        cambioImc.setOpaque(true);
+        panelDatos.add(cambioImc, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 10, 90, 30));
+
+        flag.setFont(new java.awt.Font("Verdana", 1, 13)); // NOI18N
+        flag.setForeground(new java.awt.Color(255, 0, 0));
+        flag.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        flag.setText("INFO...");
+        panelDatos.add(flag, new org.netbeans.lib.awtextra.AbsoluteConstraints(-60, 90, 360, 20));
+
+        jPanel1.add(panelDatos, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 220, 230, 250));
 
         tipoPaciente.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jPanel1.add(tipoPaciente, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 40, 64, 70));
@@ -120,7 +261,161 @@ public class Avances extends javax.swing.JFrame {
         jLabel5.setOpaque(true);
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 730, 30));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 730, 460));
+        oldCinturalbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldCinturalbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        oldCinturalbl.setText("CINTURA");
+        jPanel1.add(oldCinturalbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 350, 64, -1));
+
+        oldEstaturalbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldEstaturalbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        oldEstaturalbl.setText("ESTATURA");
+        jPanel1.add(oldEstaturalbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 440, -1, -1));
+
+        oldBrazolbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldBrazolbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        oldBrazolbl.setText("BRAZO");
+        jPanel1.add(oldBrazolbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 400, -1, -1));
+
+        oldPesolbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldPesolbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        oldPesolbl.setText("PESO");
+        jPanel1.add(oldPesolbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 310, -1, -1));
+
+        oldIMMlbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldIMMlbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        oldIMMlbl.setText("IMM");
+        jPanel1.add(oldIMMlbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 270, -1, -1));
+
+        oldIMClbl.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        oldIMClbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        oldIMClbl.setText("Número de registro de comparación");
+        jPanel1.add(oldIMClbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 140, 210, 20));
+
+        newIMClbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newIMClbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        newIMClbl.setText("IMC");
+        jPanel1.add(newIMClbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 230, 46, 23));
+
+        newIMMlbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newIMMlbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        newIMMlbl.setText("IMM");
+        jPanel1.add(newIMMlbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 270, -1, -1));
+
+        newPesolbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newPesolbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        newPesolbl.setText("PESO");
+        jPanel1.add(newPesolbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 310, -1, -1));
+
+        newCinturalbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newCinturalbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        newCinturalbl.setText("CINTURA");
+        jPanel1.add(newCinturalbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 350, 64, -1));
+
+        newBrazolbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newBrazolbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        newBrazolbl.setText("BRAZO");
+        jPanel1.add(newBrazolbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 390, -1, -1));
+
+        newEstaturalbl.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newEstaturalbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        newEstaturalbl.setText("ESTATURA");
+        jPanel1.add(newEstaturalbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 430, -1, -1));
+
+        oldEstatura.setEditable(false);
+        oldEstatura.setBackground(new java.awt.Color(153, 153, 153));
+        oldEstatura.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldEstatura.setForeground(new java.awt.Color(255, 255, 255));
+        oldEstatura.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(oldEstatura, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 430, 90, 30));
+
+        oldIMC.setEditable(false);
+        oldIMC.setBackground(new java.awt.Color(153, 153, 153));
+        oldIMC.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldIMC.setForeground(new java.awt.Color(255, 255, 255));
+        oldIMC.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(oldIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 230, 90, 30));
+
+        oldIMM.setEditable(false);
+        oldIMM.setBackground(new java.awt.Color(153, 153, 153));
+        oldIMM.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldIMM.setForeground(new java.awt.Color(255, 255, 255));
+        oldIMM.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(oldIMM, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 270, 90, 30));
+
+        oldPeso.setEditable(false);
+        oldPeso.setBackground(new java.awt.Color(153, 153, 153));
+        oldPeso.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldPeso.setForeground(new java.awt.Color(255, 255, 255));
+        oldPeso.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(oldPeso, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 310, 90, 30));
+
+        oldCintura.setEditable(false);
+        oldCintura.setBackground(new java.awt.Color(153, 153, 153));
+        oldCintura.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldCintura.setForeground(new java.awt.Color(255, 255, 255));
+        oldCintura.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(oldCintura, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 350, 90, 30));
+
+        oldBrazo.setEditable(false);
+        oldBrazo.setBackground(new java.awt.Color(153, 153, 153));
+        oldBrazo.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldBrazo.setForeground(new java.awt.Color(255, 255, 255));
+        oldBrazo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(oldBrazo, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 390, 90, 30));
+
+        newIMC.setEditable(false);
+        newIMC.setBackground(new java.awt.Color(153, 153, 153));
+        newIMC.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newIMC.setForeground(new java.awt.Color(255, 255, 255));
+        newIMC.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(newIMC, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 230, 90, 30));
+
+        newIMM.setEditable(false);
+        newIMM.setBackground(new java.awt.Color(153, 153, 153));
+        newIMM.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newIMM.setForeground(new java.awt.Color(255, 255, 255));
+        newIMM.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(newIMM, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 270, 90, 30));
+
+        newPeso.setEditable(false);
+        newPeso.setBackground(new java.awt.Color(153, 153, 153));
+        newPeso.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newPeso.setForeground(new java.awt.Color(255, 255, 255));
+        newPeso.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(newPeso, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 310, 90, 30));
+
+        newCintura.setEditable(false);
+        newCintura.setBackground(new java.awt.Color(153, 153, 153));
+        newCintura.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newCintura.setForeground(new java.awt.Color(255, 255, 255));
+        newCintura.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(newCintura, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 350, 90, 30));
+
+        newBrazo.setEditable(false);
+        newBrazo.setBackground(new java.awt.Color(153, 153, 153));
+        newBrazo.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newBrazo.setForeground(new java.awt.Color(255, 255, 255));
+        newBrazo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(newBrazo, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 390, 90, 30));
+
+        newEstatura.setEditable(false);
+        newEstatura.setBackground(new java.awt.Color(153, 153, 153));
+        newEstatura.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        newEstatura.setForeground(new java.awt.Color(255, 255, 255));
+        newEstatura.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(newEstatura, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 430, 90, 30));
+
+        oldIMClbl1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        oldIMClbl1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        oldIMClbl1.setText("IMC");
+        jPanel1.add(oldIMClbl1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 230, 46, 23));
+
+        oldIMClbl2.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        oldIMClbl2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        oldIMClbl2.setText("Número de registro previo");
+        jPanel1.add(oldIMClbl2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 140, 150, 20));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 730, 490));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -130,10 +425,27 @@ public class Avances extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        InfoPaciente mn = new InfoPaciente();
+        InfoPaciente mn=null;
+        try {
+            mn = new InfoPaciente(idP);
+        } catch (SQLException ex) {
+            Logger.getLogger(Avances.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
         mn.setVisible(true);
     }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void comboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboActionPerformed
+        // TODO add your handling code here:
+        
+        int i = Integer.parseInt(combo.getSelectedItem().toString());
+        updateThings(i,i-1);
+        for(int x : allDates){
+            int tmp = i-1;
+            firstDate.setText(""+tmp);
+            
+        }
+    }//GEN-LAST:event_comboActionPerformed
 
     /**
      * @param args the command line arguments
@@ -172,16 +484,198 @@ public class Avances extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField NameField;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel cambioBrazo;
+    private javax.swing.JLabel cambioCintura;
+    private javax.swing.JLabel cambioEstatura;
+    private javax.swing.JLabel cambioIMM;
+    private javax.swing.JLabel cambioImc;
+    private javax.swing.JLabel cambioPeso;
+    private javax.swing.JComboBox<String> combo;
+    private javax.swing.JTextField firstDate;
+    private javax.swing.JLabel flag;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField newBrazo;
+    private javax.swing.JLabel newBrazolbl;
+    private javax.swing.JTextField newCintura;
+    private javax.swing.JLabel newCinturalbl;
+    private javax.swing.JTextField newEstatura;
+    private javax.swing.JLabel newEstaturalbl;
+    private javax.swing.JTextField newIMC;
+    private javax.swing.JLabel newIMClbl;
+    private javax.swing.JTextField newIMM;
+    private javax.swing.JLabel newIMMlbl;
+    private javax.swing.JTextField newPeso;
+    private javax.swing.JLabel newPesolbl;
+    private javax.swing.JTextField oldBrazo;
+    private javax.swing.JLabel oldBrazolbl;
+    private javax.swing.JTextField oldCintura;
+    private javax.swing.JLabel oldCinturalbl;
+    private javax.swing.JTextField oldEstatura;
+    private javax.swing.JLabel oldEstaturalbl;
+    private javax.swing.JTextField oldIMC;
+    private javax.swing.JLabel oldIMClbl;
+    private javax.swing.JLabel oldIMClbl1;
+    private javax.swing.JLabel oldIMClbl2;
+    private javax.swing.JTextField oldIMM;
+    private javax.swing.JLabel oldIMMlbl;
+    private javax.swing.JTextField oldPeso;
+    private javax.swing.JLabel oldPesolbl;
+    private javax.swing.JPanel panelDatos;
     private javax.swing.JLabel tipoPaciente;
     // End of variables declaration//GEN-END:variables
+
+    private void setName(int id) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        String sqlQuery = "select Nombre_completo,Actividad from  pacientes where ID_Paciente = "+id;
+        
+        ps = con.prepareStatement(sqlQuery);
+        rs = ps.executeQuery();
+        
+        if(rs.next()){
+            NameField.setText(rs.getObject(1).toString());
+            cambiarIcono(tipoPaciente, rs.getObject(2).toString());
+        }
+        
+    }
+
+    private void getAllMedidas(int id) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        String sqlQuery = "select * from medidas where ID_Paciente = "+id;
+        
+        ps = con.prepareStatement(sqlQuery);
+        rs = ps.executeQuery();
+        
+        
+        while(rs.next()){
+            
+            Medidas md = new Medidas();
+            md.setiD_Medida(Integer.parseInt(rs.getObject(1).toString()));
+            md.setiD_Paciente(Integer.parseInt(rs.getObject(2).toString()));
+            md.setiMC(Integer.parseInt(rs.getObject(3).toString()));
+            md.setiMM(Integer.parseInt(rs.getObject(4).toString()));
+            md.setPeso(Integer.parseInt(rs.getObject(5).toString()));
+            md.setCintura(Integer.parseInt(rs.getObject(6).toString()));
+            md.setBrazo(Integer.parseInt(rs.getObject(7).toString()));
+            md.setEstatura(Integer.parseInt(rs.getObject(8).toString()));
+            medidas.add(md);
+            
+        }
+        System.out.println(medidas);
+        if(medidas.size() == 1){
+            //System.out.println("");
+            panelDatos.setVisible(false);
+            flag.setText("Este paciente tiene solo una medida y no es posible comparar con otra");
+        }else{
+            updatePage("select * from fechas where ID_Paciente = ",id);
+        }
+    }
+
+    private void updatePage(String prompt, int id) throws SQLException {
+        
+        
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        String sqlQuery = prompt+id;
+        
+        ps = con.prepareStatement(sqlQuery);
+        rs = ps.executeQuery();
+        int contador = 0;
+        while(rs.next()){
+            allDates.add(Integer.parseInt(rs.getObject(5).toString()));
+            if(contador<1){
+                firstDate.setText("Fecha "+rs.getObject(5).toString());
+            }else{
+                combo.addItem(""+rs.getObject(5).toString());
+            }
+            contador++;
+            
+        }
+        
+    }
+
+    private void updateThings(int i, int y) {
+        
+        i = i-1;
+        y = y-1;
+        System.out.println("i = "+i+" Esta es la segunda fecha");
+        System.out.println("Medidas de "+i+" ="+medidas.get(i));
+        
+        int nimc =medidas.get(i).getiMC();
+        int nimm = medidas.get(i).getiMM();
+        int np = medidas.get(i).getPeso();
+        int nc = medidas.get(i).getCintura();
+        int nb= medidas.get(i).getBrazo();
+        int ne = medidas.get(i).getEstatura();
+        
+        newIMC.setText(""+nimc);
+        newIMM.setText(""+nimm);
+        newPeso.setText(""+np);
+        newCintura.setText(""+nc);
+        newBrazo.setText(""+nb);
+        newEstatura.setText(""+ne);
+        
+        System.out.println("y = "+y+" Esta es la primera");
+        System.out.println("Medidas de "+y+" ="+medidas.get(y));
+        
+        int oimc = medidas.get(y).getiMC();
+        int oimm = medidas.get(y).getiMM();
+        int op = medidas.get(y).getPeso();
+        int pc = medidas.get(y).getCintura();
+        int ob = medidas.get(y).getBrazo();
+        int oe = medidas.get(y).getEstatura();
+        
+        oldIMC.setText(""+oimc);
+        oldIMM.setText(""+oimm);
+        oldPeso.setText(""+op);
+        oldCintura.setText(""+pc);
+        oldBrazo.setText(""+ob);
+        oldEstatura.setText(""+oe);
+        
+        int aimc = nimc - oimc;
+        int aimm = nimm - oimm;
+        int ap = np - op;
+        int ac = nc - pc;
+        int ab = nb - ob;
+        int ae = ne - oe;
+        
+        cambioImc.setText(""+aimc);
+        //checkChanges(y, i, cambioImc);
+        cambioIMM.setText(""+aimm);
+        cambioPeso.setText(""+ap);
+        cambioCintura.setText(""+ac);
+        cambioBrazo.setText(""+ab);
+        cambioEstatura.setText(""+ae);
+        
+    }
+    
+    private void checkChanges(int antes, int desp, JLabel lbl){
+        int diferencia = desp - antes;
+        if(desp > antes){
+            lbl.setBackground(Color.red);
+        } else{
+            lbl.setBackground(Color.GREEN);
+        }
+        lbl.setText(""+diferencia);
+        
+    }
 }

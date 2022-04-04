@@ -31,7 +31,7 @@ public class NuevoPaciente extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         Act.setVisible(false);
         ev.setVisible(false);
-        ev1.setVisible(false);
+        
     }
     private ImageIcon imagen;
     private Icon icono;
@@ -77,7 +77,6 @@ public class NuevoPaciente extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         NameField = new javax.swing.JTextField();
         ageField = new javax.swing.JTextField();
-        genderField = new javax.swing.JTextField();
         contacto = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -95,7 +94,7 @@ public class NuevoPaciente extends javax.swing.JFrame {
         Act = new javax.swing.JLabel();
         ev = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        ev1 = new javax.swing.JLabel();
+        GenderBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -121,25 +120,23 @@ public class NuevoPaciente extends javax.swing.JFrame {
         NameField.setBackground(new java.awt.Color(153, 153, 153));
         NameField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         NameField.setForeground(new java.awt.Color(255, 255, 255));
+        NameField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                NameFieldKeyTyped(evt);
+            }
+        });
         jPanel1.add(NameField, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, 398, 38));
 
         ageField.setBackground(new java.awt.Color(153, 153, 153));
         ageField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         ageField.setForeground(new java.awt.Color(255, 255, 255));
-        jPanel1.add(ageField, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 180, 52, 38));
-
-        genderField.setBackground(new java.awt.Color(153, 153, 153));
-        genderField.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        genderField.setForeground(new java.awt.Color(255, 255, 255));
-        genderField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                genderFieldFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                genderFieldFocusLost(evt);
+        ageField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        ageField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                ageFieldKeyTyped(evt);
             }
         });
-        jPanel1.add(genderField, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 180, 52, 38));
+        jPanel1.add(ageField, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 180, 52, 38));
 
         contacto.setBackground(new java.awt.Color(153, 153, 153));
         contacto.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
@@ -160,7 +157,7 @@ public class NuevoPaciente extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel5.setText("Género");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 190, -1, -1));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 190, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel6.setText("Contacto");
@@ -253,10 +250,15 @@ public class NuevoPaciente extends javax.swing.JFrame {
         jLabel7.setText("Agregar nuevo paciente");
         jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 50, 200, 40));
 
-        ev1.setForeground(new java.awt.Color(255, 0, 0));
-        ev1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        ev1.setText("F o M");
-        jPanel1.add(ev1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 180, 70, 40));
+        GenderBox.setBackground(new java.awt.Color(153, 153, 153));
+        GenderBox.setForeground(new java.awt.Color(255, 255, 255));
+        GenderBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "...", "F", "M" }));
+        GenderBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GenderBoxActionPerformed(evt);
+            }
+        });
+        jPanel1.add(GenderBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 180, 98, 38));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -354,15 +356,30 @@ public class NuevoPaciente extends javax.swing.JFrame {
         ev.setVisible(false);
     }//GEN-LAST:event_contactoFocusLost
 
-    private void genderFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_genderFieldFocusGained
+    private void ageFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ageFieldKeyTyped
         // TODO add your handling code here:
-        ev1.setVisible(true);
-    }//GEN-LAST:event_genderFieldFocusGained
+        char c = evt.getKeyChar();
+        if(!Character.isDigit(c)){
+            evt.consume();
+        }
+    }//GEN-LAST:event_ageFieldKeyTyped
 
-    private void genderFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_genderFieldFocusLost
+    private void GenderBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GenderBoxActionPerformed
         // TODO add your handling code here:
-        ev1.setVisible(false);
-    }//GEN-LAST:event_genderFieldFocusLost
+        String gender = GenderBox.getSelectedItem().toString();
+        if(gender == "..."){
+            JOptionPane.showMessageDialog(null, "Recuerda que la opción '...' no es valida!","Recordatorio!",JOptionPane.ERROR_MESSAGE);
+            
+        }
+    }//GEN-LAST:event_GenderBoxActionPerformed
+
+    private void NameFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_NameFieldKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if(Character.isDigit(c)){
+            evt.consume();
+        }
+    }//GEN-LAST:event_NameFieldKeyTyped
 
     /**
      * @param args the command line arguments
@@ -404,13 +421,12 @@ public class NuevoPaciente extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Act;
+    private javax.swing.JComboBox<String> GenderBox;
     private javax.swing.JTextField NameField;
     private javax.swing.JComboBox<String> activityField;
     private javax.swing.JTextField ageField;
     private javax.swing.JTextField contacto;
     private javax.swing.JLabel ev;
-    private javax.swing.JLabel ev1;
-    private javax.swing.JTextField genderField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -432,7 +448,7 @@ public class NuevoPaciente extends javax.swing.JFrame {
     private void checkData() throws Exception{
         String nombre = NameField.getText().toString();
         String edad = ageField.getText().toString();
-        String genero = genderField.getText().toString();
+        String genero = GenderBox.getSelectedItem().toString();
         String cont = contacto.getText().toString();
         String actividad = activityField.getSelectedItem().toString();
         

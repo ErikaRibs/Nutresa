@@ -5,13 +5,21 @@
  */
 package Frames;
 
+import clases.Conexion;
 import java.awt.Image;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -23,26 +31,28 @@ public class PlanAlimenticio extends javax.swing.JFrame {
      * Creates new form PlanAlimenticio
      */
     private int pID;
+    private String here = "plan alimenticio";
+    private String nombrePaciente = "";
+    private boolean hasData = false;
     public PlanAlimenticio() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setTitle("Plan Alimenticio");
     }
-    public PlanAlimenticio(int pcId) {
+    public PlanAlimenticio(int pcId) throws SQLException {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setTitle("Plan Alimenticio");
         pID = pcId;
-        cambiarIcono(plan,pcId);
-        worker.setVisible(false);
-        flag.setVisible(false);
+        loadName(pcId);
+        checkImg(pcId);
     }
     
     private ImageIcon imagen;
     private Icon icono;
     
-    private void cambiarIcono(JLabel lbl, int id) {
-        String url = "src/PlanAlimenticioIMG/"+id+".jpg";
+    private void cambiarIcono(JLabel lbl, String id) {
+        String url = id;
         
         this.imagen = new ImageIcon(url);
         this.icono = new ImageIcon(this.imagen.getImage().getScaledInstance(lbl.getWidth(), lbl.getHeight(), Image.SCALE_DEFAULT));
@@ -70,6 +80,7 @@ public class PlanAlimenticio extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         tipoPaciente = new javax.swing.JLabel();
         plan = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -115,8 +126,9 @@ public class PlanAlimenticio extends javax.swing.JFrame {
         jPanel1.add(worker, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 193, -1, -1));
 
         flag.setFont(new java.awt.Font("Verdana", 2, 14)); // NOI18N
-        flag.setText("Seguimos trabajando. No olvides tu casco");
-        jPanel1.add(flag, new org.netbeans.lib.awtextra.AbsoluteConstraints(199, 275, 325, 40));
+        flag.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        flag.setText("Aún no hay conteni");
+        jPanel1.add(flag, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 260, 550, 40));
 
         jLabel6.setBackground(new java.awt.Color(197, 152, 38));
         jLabel6.setOpaque(true);
@@ -124,7 +136,18 @@ public class PlanAlimenticio extends javax.swing.JFrame {
 
         tipoPaciente.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jPanel1.add(tipoPaciente, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 40, 64, 70));
-        jPanel1.add(plan, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 140, 640, 250));
+        jPanel1.add(plan, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 640, 280));
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/folder.png"))); // NOI18N
+        jLabel4.setToolTipText("Cargar nuevo plan");
+        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 390, 50, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -134,7 +157,7 @@ public class PlanAlimenticio extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
         );
 
         pack();
@@ -155,6 +178,41 @@ public class PlanAlimenticio extends javax.swing.JFrame {
         mn.setVisible(true);
         //      "/desktop/planesAlimenticios/NombrePaciente/plan.jpg"
     }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(null, "Selecciona la imagen correspondiente al plan de "+nombrePaciente,"Recuerda!",JOptionPane.INFORMATION_MESSAGE);
+        
+        String ruta = "";
+        JFileChooser fc = new JFileChooser();
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("PNG JPG JPEG", "png","jpg","jpeg");
+        fc.setFileFilter(filtro);
+        
+        int response = fc.showOpenDialog(this);
+        if(response == JFileChooser.APPROVE_OPTION){
+            ruta = fc.getSelectedFile().getAbsolutePath();
+            cambiarIcono(plan,ruta);
+            ruta = ruta.replaceAll("\\\\", "/");
+            String insertData= "insert into planalim values ("+pID+", '"+ruta+"' ,null);";
+            String updateData= "update planalim set pathImg = '"+ruta+"' where ID_Paciente = "+pID;
+            if(hasData){
+                System.out.println(updateData);
+                try {
+                    postDate(updateData);
+                } catch (SQLException ex) {
+                    Logger.getLogger(PlanAlimenticio.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
+                System.out.println(insertData);
+                try {
+                    postDate(insertData);
+                } catch (SQLException ex) {
+                    Logger.getLogger(PlanAlimenticio.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+    }//GEN-LAST:event_jLabel4MouseClicked
 
     /**
      * @param args the command line arguments
@@ -197,6 +255,7 @@ public class PlanAlimenticio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
@@ -204,4 +263,72 @@ public class PlanAlimenticio extends javax.swing.JFrame {
     private javax.swing.JLabel tipoPaciente;
     private javax.swing.JLabel worker;
     // End of variables declaration//GEN-END:variables
+
+    private void loadName(int pcId) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        String sqlQuery = "select Nombre_completo from  pacientes where ID_Paciente = "+pcId;
+        
+        ps = con.prepareStatement(sqlQuery);
+        rs = ps.executeQuery();
+        
+        if(rs.next()){
+            String tmp = rs.getObject(1).toString();
+            NameField.setText(tmp);
+            nombrePaciente = tmp;
+            con.close();
+        }
+            
+    }
+
+    private void checkImg(int pcId) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        String sqlQuery = "select * from planalim where ID_Paciente = "+pcId;
+        
+        ps = con.prepareStatement(sqlQuery);
+        rs = ps.executeQuery();
+        System.out.println("*******Checando si hay valores en planAlimenticio");
+        if(rs.next()){
+            String ruta = rs.getObject(2).toString();
+            worker.setVisible(false);
+            flag.setVisible(false);
+            cambiarIcono(plan,ruta);
+            hasData = true;
+        }else{
+            worker.setVisible(true);
+            flag.setVisible(true);
+            flag.setText("Aún no hay información de "+here+" para el paciente "+nombrePaciente);
+            hasData = false;
+       }
+    }
+
+    private void postDate(String updateData) throws SQLException {
+        PreparedStatement ps = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        
+        String sqlQuery = updateData;
+        
+        ps = con.prepareStatement(sqlQuery);
+        
+        int a = ps.executeUpdate();
+        if(a==1){
+            JOptionPane.showMessageDialog(null, "Agregaste nuevo plan alimenticio exitosamente!","Exito!",JOptionPane.INFORMATION_MESSAGE);
+            
+           worker.setVisible(false);
+           flag.setVisible(false);
+        }
+        
+    }
 }

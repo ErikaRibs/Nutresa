@@ -5,6 +5,21 @@
  */
 package Frames;
 
+import clases.Conexion;
+import java.awt.Image;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 /**
  *
  * @author PRIDE OMEGA
@@ -14,15 +29,63 @@ public class citasDePacientes extends javax.swing.JFrame {
     /**
      * Creates new form citasDePacientes
      */
+    private int idG;
     public citasDePacientes() {
         initComponents();
         this.setLocationRelativeTo(null);
     }
-
-    citasDePacientes(int pacienteID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public citasDePacientes(int pcID) throws SQLException {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        idG = pcID;
+        worker.setVisible(false);
+        flag.setVisible(false);
+        checkAgenda(pcID);
+        getInfo(pcID);
     }
+    
+    private ImageIcon imagen;
+    private Icon icono;
+    
+    private boolean hasData;
+    private String here = "citas";
+    private String nombrePaciente;
 
+    private void cambiarIcono(JLabel lbl, String id) {
+        String url = id;
+        
+        this.imagen = new ImageIcon(url);
+        this.icono = new ImageIcon(this.imagen.getImage().getScaledInstance(lbl.getWidth(), lbl.getHeight(), Image.SCALE_DEFAULT));
+        lbl.setIcon(this.icono);
+        this.repaint();
+    }
+    private void changeIcon(JLabel lbl, String tipo){
+        String url = "src/src/";
+        if(null != tipo)switch (tipo) {
+            case "Nada":
+                url+="Nada.png";
+                break;
+            case "Deportes":
+                url+="Deportes.png";
+                break;
+            case "Pesas":
+                url+="Pesas.png";
+                break;
+            case "Crossfit":
+                url+="Crossfit.png";
+                break;
+            case "NoData":
+                url+="NoData.png";
+                break;
+            default:
+                url+="Nada.png";
+                break;
+        }
+        this.imagen = new ImageIcon(url);
+        this.icono = new ImageIcon(this.imagen.getImage().getScaledInstance(lbl.getWidth(), lbl.getHeight(), Image.SCALE_DEFAULT));
+        lbl.setIcon(this.icono);
+        this.repaint();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,10 +98,13 @@ public class citasDePacientes extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        Month = new javax.swing.JLabel();
+        worker = new javax.swing.JLabel();
+        flag = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        plan = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        tipoPaciente = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -70,21 +136,37 @@ public class citasDePacientes extends javax.swing.JFrame {
         });
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 390, -1, -1));
 
-        jLabel3.setFont(new java.awt.Font("Verdana", 2, 18)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Mes Actual");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(283, 29, 138, 36));
+        Month.setFont(new java.awt.Font("Verdana", 2, 18)); // NOI18N
+        Month.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        Month.setText("-- Sin citas");
+        jPanel1.add(Month, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 50, 200, 36));
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/ingeniero.png"))); // NOI18N
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(333, 164, -1, -1));
+        worker.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/ingeniero.png"))); // NOI18N
+        jPanel1.add(worker, new org.netbeans.lib.awtextra.AbsoluteConstraints(333, 164, -1, -1));
 
-        jLabel5.setFont(new java.awt.Font("Verdana", 2, 14)); // NOI18N
-        jLabel5.setText("Seguimos trabajando. No olvides tu casco");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(202, 246, 325, 40));
+        flag.setFont(new java.awt.Font("Verdana", 2, 14)); // NOI18N
+        flag.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        flag.setText("Seguimos trabajando. No olvides tu casco");
+        jPanel1.add(flag, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 250, 510, 40));
 
         jLabel6.setBackground(new java.awt.Color(197, 152, 38));
         jLabel6.setOpaque(true);
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 730, 30));
+        jPanel1.add(plan, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, 640, 270));
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/folder.png"))); // NOI18N
+        jLabel4.setToolTipText("Cargar nuevo plan");
+        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 390, 50, 40));
+
+        tipoPaciente.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jPanel1.add(tipoPaciente, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 40, 64, 70));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 730, 450));
 
@@ -96,10 +178,57 @@ public class citasDePacientes extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        InfoPaciente mn = new InfoPaciente();
+        InfoPaciente mn = null;
+        try {
+            mn = new InfoPaciente(idG);
+        } catch (SQLException ex) {
+            Logger.getLogger(citasDePacientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
         mn.setVisible(true);
     }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+        // TODO add your handling code here:
+        
+        JOptionPane.showMessageDialog(null, "Selecciona la imagen correspondiente para las citas de este mes para "+nombrePaciente,"Recuerda!",JOptionPane.INFORMATION_MESSAGE);
+
+        String ruta = "";
+        JFileChooser fc = new JFileChooser();
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("PNG JPG JPEG", "png","jpg","jpeg");
+        fc.setFileFilter(filtro);
+
+        int response = fc.showOpenDialog(this);
+        if(response == JFileChooser.APPROVE_OPTION){
+            
+            String month = JOptionPane.showInputDialog(null,"Introduce el mes para el que pertenece esta cita","Complementa...",JOptionPane.QUESTION_MESSAGE);
+            
+            ruta = fc.getSelectedFile().getAbsolutePath();
+            cambiarIcono(plan,ruta);
+            Month.setText(month+" 2022");
+            ruta = ruta.replaceAll("\\\\", "/");
+            String insertData= "insert into citasAgenda values ("+idG+", '"+ruta+"' ,'"+month+"');";
+            String updateData= "update citasAgenda set pathImg = '"+ruta+"',mes = '"+month+"' where ID_Paciente = "+idG;
+            if(hasData){
+                System.out.println(updateData);
+                try {
+                    postDate(updateData);
+                } catch (Exception ex) {
+                    Logger.getLogger(PlanAlimenticio.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
+                System.out.println(insertData);
+                try {
+                    postDate(insertData);
+                    worker.setVisible(false);
+                    flag.setVisible(false);
+                } catch (Exception ex) {
+                    Logger.getLogger(PlanAlimenticio.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+    }//GEN-LAST:event_jLabel4MouseClicked
 
     /**
      * @param args the command line arguments
@@ -137,12 +266,82 @@ public class citasDePacientes extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Month;
+    private javax.swing.JLabel flag;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel plan;
+    private javax.swing.JLabel tipoPaciente;
+    private javax.swing.JLabel worker;
     // End of variables declaration//GEN-END:variables
+
+    private void checkAgenda(int pcID) throws SQLException {
+        //
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        String sqlQuery = "select * from citasAgenda where ID_Paciente = "+pcID;
+        
+        ps = con.prepareStatement(sqlQuery);
+        rs = ps.executeQuery();
+        //System.out.println("*******Checando si hay valores en planAlimenticio");
+        if(rs.next()){
+            String ruta = rs.getObject(2).toString();
+            worker.setVisible(false);
+            flag.setVisible(false);
+            cambiarIcono(plan,ruta);
+            hasData = true;
+            Month.setText(rs.getObject(3).toString()+" 2022");
+            
+            con.close();
+        }else{
+            worker.setVisible(true);
+            flag.setVisible(true);
+            flag.setText("Aún no hay información de "+here+" para el paciente");
+            hasData = false;
+       }
+    }
+
+    private void postDate(String updateData) throws SQLException {
+        System.out.println(updateData);
+        PreparedStatement ps = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        
+        String sqlQuery = updateData;
+        
+        ps = con.prepareStatement(sqlQuery);
+        
+        int a = ps.executeUpdate();
+        if(a==1){
+            JOptionPane.showMessageDialog(null, "Agregaste nuevo calendario de citas exitosamente!","Exito!",JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void getInfo(int pcID) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        Conexion conn = new Conexion();
+        Connection con  = conn.getConnection();
+        
+        String sqlQuery = "select Nombre_Completo,Actividad from pacientes where ID_Paciente = "+pcID;
+        
+        ps = con.prepareStatement(sqlQuery);
+        rs = ps.executeQuery();
+        
+        if(rs.next()){
+            nombrePaciente = rs.getObject(1).toString();
+            changeIcon(tipoPaciente,rs.getObject(2).toString());
+        }
+    }
+
 }

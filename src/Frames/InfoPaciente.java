@@ -77,8 +77,7 @@ public class InfoPaciente extends javax.swing.JFrame {
             estaturaField.setText("--");
             avancesBtn.setVisible(false);
             avancesImg.setVisible(false);
-            plAl.setVisible(false);
-            plAlImg.setVisible(false);
+            con.close();
         }
         
         
@@ -94,20 +93,25 @@ public class InfoPaciente extends javax.swing.JFrame {
         Conexion conn = new Conexion();
         Connection con  = conn.getConnection();
         String sqlQuery = "";
+        
         if(i == 0){
+            System.out.println("----------VerifyValues returned a "+i);
+            System.out.println("Estamos en i == 0; Porque el paciente no tiene");
             sqlQuery = "select p.Nombre_completo,p.Genero,p.Edad,p.Actividad, m.IMC, m.IMM, m.Peso, m.Cintura,m.Brazo,m.Estatura from medidas as m,pacientes as p where p.ID_Paciente = m.ID_Paciente AND p.ID_Paciente = "+pacID;
         }else{
+            System.out.println("----------VerifyValues returned a "+i);
+            
+            System.out.println("Estamos en i == 1");
             sqlQuery = "select p.Nombre_completo,p.Genero,p.Edad,p.Actividad, m.IMC, m.IMM, m.Peso, m.Cintura,m.Brazo,m.Estatura from medidas as m,pacientes as p where p.ID_Paciente = m.ID_Paciente AND p.ID_Paciente = "+pacID+" and m.ID_Medida = "+i;
         }
         
         ps = con.prepareStatement(sqlQuery);
         rs = ps.executeQuery();
         
-        ResultSetMetaData rsMd = rs.getMetaData();
-        
-        int xd = rsMd.getColumnCount();
+       
         if(!rs.next()){
             System.out.println("Este compa no tiene detalles aun unu");
+            con.close();
             return false;
         }else{
             //System.out.println("Aqui andamos porque aca fue donde nos puso la vida");
@@ -125,7 +129,7 @@ public class InfoPaciente extends javax.swing.JFrame {
             cinturaField.setText(rs.getObject(8).toString());
             brazoField.setText(rs.getObject(9).toString());
             estaturaField.setText(rs.getObject(10).toString());
-            
+            con.close();
             return true;
         }
     }
@@ -194,8 +198,8 @@ public class InfoPaciente extends javax.swing.JFrame {
         avancesBtn = new javax.swing.JLabel();
         plAlImg = new javax.swing.JLabel();
         plAl = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
+        citasimg = new javax.swing.JLabel();
+        citasbtn = new javax.swing.JLabel();
         PesoField = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
@@ -371,25 +375,25 @@ public class InfoPaciente extends javax.swing.JFrame {
         });
         jPanel1.add(plAl, new org.netbeans.lib.awtextra.AbsoluteConstraints(253, 375, -1, -1));
 
-        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/programar.png"))); // NOI18N
-        jLabel17.setToolTipText("Ver citas");
-        jLabel17.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jLabel17.addMouseListener(new java.awt.event.MouseAdapter() {
+        citasimg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/programar.png"))); // NOI18N
+        citasimg.setToolTipText("Ver citas");
+        citasimg.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        citasimg.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel17MouseClicked(evt);
+                citasimgMouseClicked(evt);
             }
         });
-        jPanel1.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 370, 70, 70));
+        jPanel1.add(citasimg, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 370, 70, 70));
 
-        jLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/citas.png"))); // NOI18N
-        jLabel14.setToolTipText("Ver citas");
-        jLabel14.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jLabel14.addMouseListener(new java.awt.event.MouseAdapter() {
+        citasbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/citas.png"))); // NOI18N
+        citasbtn.setToolTipText("Ver citas");
+        citasbtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        citasbtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel14MouseClicked(evt);
+                citasbtnMouseClicked(evt);
             }
         });
-        jPanel1.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 370, -1, -1));
+        jPanel1.add(citasbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 370, -1, -1));
 
         PesoField.setEditable(false);
         PesoField.setBackground(new java.awt.Color(153, 153, 153));
@@ -447,30 +451,54 @@ public class InfoPaciente extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void avancesBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_avancesBtnMouseClicked
-        // TODO add your handling code here:
-        moveToAvances();
+        try {
+            // TODO add your handling code here:
+            moveToAvances();
+        } catch (SQLException ex) {
+            Logger.getLogger(InfoPaciente.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_avancesBtnMouseClicked
 
     private void plAlMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_plAlMouseClicked
-        // TODO add your handling code here:
-        moveToPlan();
+        try {
+            // TODO add your handling code here:
+            moveToPlan();
+        } catch (SQLException ex) {
+            Logger.getLogger(InfoPaciente.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_plAlMouseClicked
 
-    private void jLabel14MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel14MouseClicked
+    private void citasbtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_citasbtnMouseClicked
         // TODO add your handling code here:
-        moveToCitas();
-    }//GEN-LAST:event_jLabel14MouseClicked
+        try {
+            moveToCitas();
+        } catch (Exception ex) {
+            Logger.getLogger(InfoPaciente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_citasbtnMouseClicked
 
-    private void jLabel17MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseClicked
-        moveToCitas();
-    }//GEN-LAST:event_jLabel17MouseClicked
+    private void citasimgMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_citasimgMouseClicked
+        try {
+            moveToCitas();
+        } catch (Exception ex) {
+            Logger.getLogger(InfoPaciente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_citasimgMouseClicked
 
     private void plAlImgMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_plAlImgMouseClicked
-        moveToPlan();
+        try {
+            moveToPlan();
+        } catch (SQLException ex) {
+            Logger.getLogger(InfoPaciente.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_plAlImgMouseClicked
 
     private void avancesImgMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_avancesImgMouseClicked
-        moveToAvances();
+        try {
+            moveToAvances();
+        } catch (SQLException ex) {
+            Logger.getLogger(InfoPaciente.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_avancesImgMouseClicked
 
     private void jLabel20MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel20MouseClicked
@@ -537,16 +565,16 @@ public class InfoPaciente extends javax.swing.JFrame {
     private javax.swing.JLabel avancesImg;
     private javax.swing.JTextField brazoField;
     private javax.swing.JTextField cinturaField;
+    private javax.swing.JLabel citasbtn;
+    private javax.swing.JLabel citasimg;
     private javax.swing.JTextField estaturaField;
     private javax.swing.JTextField genderField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel22;
@@ -563,20 +591,20 @@ public class InfoPaciente extends javax.swing.JFrame {
     private javax.swing.JLabel tipoPaciente;
     // End of variables declaration//GEN-END:variables
 
-    private void moveToCitas() {
+    private void moveToCitas() throws SQLException {
         citasDePacientes cdp = new citasDePacientes(pacienteID);
         this.dispose();
         cdp.setVisible(true);
     }
 
-    private void moveToPlan() {
+    private void moveToPlan() throws SQLException {
         PlanAlimenticio pa = new PlanAlimenticio(pacienteID);
         this.dispose();
         pa.setVisible(true);
     }
 
-    private void moveToAvances() {
-        Avances av = new Avances();
+    private void moveToAvances() throws SQLException {
+        Avances av = new Avances(pacienteID);
         this.dispose();
         av.setVisible(true);
     }
@@ -597,6 +625,7 @@ public class InfoPaciente extends javax.swing.JFrame {
         Connection con  = conn.getConnection();
         
         String sqlQuery = "select citaNumero, ID_Medida from fechas where ID_Paciente = "+pacID+" order by citaNumero desc limit 1";
+        System.out.println("Estamos haciendo el select asi: "+sqlQuery);
         System.err.println("Buscando ultima cita del paciente "+pacID);
         //Este nos trae el numero y id de la ultima cita 
         
@@ -604,7 +633,11 @@ public class InfoPaciente extends javax.swing.JFrame {
         rs = ps.executeQuery();
         
         if(rs.next()){
-            return Integer.parseInt(rs.getObject(2).toString());
+            //con.close();
+            int tmp = Integer.parseInt(rs.getObject(2).toString());
+            con.close();
+            System.out.println("abr -------"+tmp);
+            return tmp;
             
         }else{
             return 0;

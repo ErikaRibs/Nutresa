@@ -8,6 +8,8 @@ package Frames;
 import clases.Conexion;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,10 +21,14 @@ import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -39,6 +45,8 @@ public class Main extends javax.swing.JFrame {
     Thread hilo;
     String hr,min,sec;
     
+    private TableRowSorter trs;
+    
     public Main() throws Exception {
         initComponents();
         //this.setContentPane(fondos);
@@ -50,6 +58,10 @@ public class Main extends javax.swing.JFrame {
     }
     public DefaultTableModel dm = new DefaultTableModel();
     private void fillTab() throws Exception {
+        
+        TableColumnModel cM = tbPacientes.getColumnModel();
+        DefaultTableCellRenderer cR = new DefaultTableCellRenderer();
+        cR.setHorizontalAlignment(JLabel.CENTER);
         
         tbPacientes.setModel(dm);
         
@@ -81,10 +93,25 @@ public class Main extends javax.swing.JFrame {
             
             for(int i=0;i<xd;i++){
                 filas[i] = rs.getObject(i+1);
+                
             }
             
             dm.addRow(filas);
+            
         }
+        
+        TableCellRenderer rHeader = tbPacientes.getTableHeader().getDefaultRenderer();
+        JLabel header = (JLabel) rHeader;
+        header.setHorizontalAlignment(JLabel.CENTER);
+        
+        cM.getColumn(0).setCellRenderer(cR); // 0 ID
+        cM.getColumn(0).setPreferredWidth(23);
+        cM.getColumn(1).setPreferredWidth(99); // 1 Nombre
+        cM.getColumn(2).setPreferredWidth(43); // 2 Genero
+        cM.getColumn(2).setCellRenderer(cR);
+        cM.getColumn(3).setPreferredWidth(30);
+        cM.getColumn(3).setCellRenderer(cR);
+        
     }
    
     private void filterTable(String query){
@@ -197,34 +224,13 @@ public class Main extends javax.swing.JFrame {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtSearchKeyReleased(evt);
             }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtSearchKeyTyped(evt);
+            }
         });
         jPanel1.add(txtSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 50, 227, 60));
 
         tbPacientes.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        tbPacientes.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"Ricard", "Reyes G"},
-                {"Erika", "Rivas L"}
-            },
-            new String [] {
-                "Nombre(s)", "Apellidos"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return false;
-            }
-        });
         tbPacientes.setToolTipText("");
         tbPacientes.setSelectionBackground(new java.awt.Color(197, 152, 38));
         tbPacientes.setSelectionForeground(new java.awt.Color(0, 0, 0));
@@ -236,7 +242,7 @@ public class Main extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tbPacientes);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 140, 346, 299));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 350, 299));
 
         txtSaludo.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
         txtSaludo.setText("Buen día, LN Omar Moreno");
@@ -308,13 +314,25 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_txtSearchActionPerformed
 
     private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
-        String query = txtSearch.getText().toString();
-        filterTable(query);
+        
     }//GEN-LAST:event_txtSearchKeyReleased
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
        
     }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void txtSearchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyTyped
+        // TODO add your handling code here:
+        txtSearch.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                trs.setRowFilter(RowFilter.regexFilter("(?i)"+txtSearch.getText().toString(), 1));
+            }
+            
+        });
+        trs = new TableRowSorter(dm);
+        tbPacientes.setRowSorter(trs);
+    }//GEN-LAST:event_txtSearchKeyTyped
 
     /**
      * @param args the command line arguments
